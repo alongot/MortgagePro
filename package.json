@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "seed:rates": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' scripts/seed-rates.ts",
+    "seed:properties": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' scripts/seed-properties.ts",
+    "seed:all": "npm run seed:rates && npm run seed:properties"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -30,8 +33,10 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.35",
+    "pg": "^8.18.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }

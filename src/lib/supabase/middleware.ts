@@ -34,21 +34,24 @@ export async function updateSession(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser();
 
+    // Public routes that don't require authentication
+    const publicRoutes = ["/", "/about", "/features", "/pricing", "/api/"];
+    const isPublicRoute = publicRoutes.some(route =>
+      request.nextUrl.pathname === route || request.nextUrl.pathname.startsWith(route)
+    );
+
     if (
       !user &&
       !request.nextUrl.pathname.startsWith("/auth") &&
-      request.nextUrl.pathname !== "/"
+      !isPublicRoute
     ) {
       const url = request.nextUrl.clone();
       url.pathname = "/auth/login";
       return NextResponse.redirect(url);
     }
 
-    if (user && request.nextUrl.pathname.startsWith("/auth")) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/dashboard";
-      return NextResponse.redirect(url);
-    }
+    // Don't redirect away from auth pages - let users switch accounts
+    // The login page will clear the session if needed
 
     return supabaseResponse;
   } catch {

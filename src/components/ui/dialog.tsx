@@ -27,11 +27,11 @@ function Dialog({ open, onClose, children }: DialogProps) {
   return (
     <div className="fixed inset-0 z-50">
       <div
-        className="fixed inset-0 bg-black/50 animate-fade-in"
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm animate-fade-in"
         onClick={onClose}
       />
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <div className="relative bg-background rounded-lg shadow-lg max-w-lg w-full max-h-[90vh] overflow-y-auto animate-fade-in">
+        <div className="relative bg-background rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto animate-scale-in-bounce border">
           {children}
         </div>
       </div>
@@ -54,7 +54,7 @@ function DialogHeader({
       {onClose && (
         <button
           onClick={onClose}
-          className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring"
+          className="rounded-full p-1.5 opacity-70 ring-offset-background transition-all duration-200 hover:opacity-100 hover:bg-muted hover:rotate-90 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-ring active:scale-95"
         >
           <X className="h-4 w-4" />
         </button>

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx supabase:*)",
+      "Bash(node -e \"\nconst { createClient } = require\\(''@supabase/supabase-js''\\);\n\n// Connect directly using postgres connection string\nconst connectionString = ''postgresql://postgres.nvksevlmgkmnkglrjqus:Lokaismydog1!@aws-0-us-west-2.pooler.supabase.com:5432/postgres'';\n\n// Create Supabase client using the project URL\nconst supabaseUrl = ''https://nvksevlmgkmnkglrjqus.supabase.co'';\nconst supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '''';\n\nconsole.log\\(''Testing connection...''\\);\nconsole.log\\(''Supabase URL:'', supabaseUrl\\);\n\")",
+      "Bash(node:*)",
+      "Bash(curl:*)",
+      "Bash(npx tsc:*)"
+    ]
+  }
+}

@@ -8,6 +8,7 @@ import {
   Clock,
   Calendar,
   Loader2,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +17,6 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogHeader, DialogTitle, DialogContent, DialogFooter } from "@/components/ui/dialog";
-import { mockData } from "@/lib/mock-data";
 import { cn, getPriorityColor, formatDate } from "@/lib/utils";
 import type { Task } from "@/types";
 
@@ -42,7 +42,7 @@ const priorityOptions = [
 
 export default function TasksPage() {
   const [filter, setFilter] = useState("all");
-  const [tasks, setTasks] = useState<Task[]>(mockData.tasks);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [createOpen, setCreateOpen] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
@@ -68,20 +68,49 @@ export default function TasksPage() {
     );
   };
 
+  const handleCreateTask = () => {
+    if (!newTitle.trim()) return;
+
+    const newTask: Task = {
+      id: `task-${Date.now()}`,
+      user_id: "user-1",
+      lead_id: null,
+      title: newTitle.trim(),
+      description: newDescription.trim() || null,
+      due_date: newDueDate ? new Date(newDueDate).toISOString() : null,
+      priority: newPriority as "low" | "medium" | "high" | "urgent",
+      status: "pending",
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      lead: undefined,
+    };
+
+    setTasks(prev => [newTask, ...prev]);
+    setCreateOpen(false);
+    setNewTitle("");
+    setNewDescription("");
+    setNewPriority("medium");
+    setNewDueDate("");
+  };
+
+  const handleDeleteTask = (taskId: string) => {
+    setTasks(prev => prev.filter(t => t.id !== taskId));
+  };
+
   const pendingCount = tasks.filter((t) => t.status === "pending").length;
   const inProgressCount = tasks.filter((t) => t.status === "in_progress").length;
   const completedCount = tasks.filter((t) => t.status === "completed").length;
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between animate-in">
         <div>
           <h1 className="text-2xl font-bold">Tasks</h1>
           <p className="text-muted-foreground text-sm">
             Manage your to-do items and follow-ups
           </p>
         </div>
-        <Button onClick={() => setCreateOpen(true)}>
+        <Button onClick={() => setCreateOpen(true)} className="hover:scale-105 active:scale-95 transition-transform">
           <Plus className="h-4 w-4 mr-1" />
           New Task
         </Button>
@@ -89,35 +118,56 @@ export default function TasksPage() {
 
       {/* Summary cards */}
       <div className="grid grid-cols-3 gap-4">
-        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setFilter("pending")}>
+        <Card
+          className={cn(
+            "cursor-pointer hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-card-in group",
+            filter === "pending" && "ring-2 ring-orange-500"
+          )}
+          style={{ animationDelay: '100ms' }}
+          onClick={() => setFilter("pending")}
+        >
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-orange-50">
+            <div className="p-2 rounded-lg bg-orange-50 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
               <Clock className="h-5 w-5 text-orange-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{pendingCount}</p>
+              <p className="text-2xl font-bold animate-number" style={{ animationDelay: '200ms' }}>{pendingCount}</p>
               <p className="text-xs text-muted-foreground">Pending</p>
             </div>
           </CardContent>
         </Card>
-        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setFilter("in_progress")}>
+        <Card
+          className={cn(
+            "cursor-pointer hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-card-in group",
+            filter === "in_progress" && "ring-2 ring-blue-500"
+          )}
+          style={{ animationDelay: '150ms' }}
+          onClick={() => setFilter("in_progress")}
+        >
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-blue-50">
-              <Loader2 className="h-5 w-5 text-blue-600" />
+            <div className="p-2 rounded-lg bg-blue-50 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+              <Loader2 className={cn("h-5 w-5 text-blue-600", filter === "in_progress" && "animate-spin")} />
             </div>
             <div>
-              <p className="text-2xl font-bold">{inProgressCount}</p>
+              <p className="text-2xl font-bold animate-number" style={{ animationDelay: '250ms' }}>{inProgressCount}</p>
               <p className="text-xs text-muted-foreground">In Progress</p>
             </div>
           </CardContent>
         </Card>
-        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setFilter("completed")}>
+        <Card
+          className={cn(
+            "cursor-pointer hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-card-in group",
+            filter === "completed" && "ring-2 ring-green-500"
+          )}
+          style={{ animationDelay: '200ms' }}
+          onClick={() => setFilter("completed")}
+        >
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-green-50">
+            <div className="p-2 rounded-lg bg-green-50 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
               <CheckCircle2 className="h-5 w-5 text-green-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{completedCount}</p>
+              <p className="text-2xl font-bold animate-number" style={{ animationDelay: '300ms' }}>{completedCount}</p>
               <p className="text-xs text-muted-foreground">Completed</p>
             </div>
           </CardContent>
@@ -139,25 +189,29 @@ export default function TasksPage() {
 
       {/* Task list */}
       <div className="space-y-2">
-        {filteredTasks.map((task) => (
-          <Card key={task.id} className="hover:shadow-sm transition-shadow">
+        {filteredTasks.map((task, index) => (
+          <Card
+            key={task.id}
+            className="hover:shadow-md transition-all duration-200 hover:translate-x-1 animate-card-in group"
+            style={{ animationDelay: `${300 + index * 50}ms` }}
+          >
             <CardContent className="p-4">
               <div className="flex items-start gap-3">
                 <button
                   onClick={() => toggleTaskStatus(task.id)}
-                  className="mt-0.5 shrink-0"
+                  className="mt-0.5 shrink-0 transition-transform duration-200 hover:scale-125 active:scale-90"
                 >
                   {statusIcon[task.status]}
                 </button>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <p className={cn(
-                      "font-medium text-sm",
+                      "font-medium text-sm transition-all duration-300",
                       task.status === "completed" && "line-through text-muted-foreground"
                     )}>
                       {task.title}
                     </p>
-                    <Badge className={cn("text-[10px]", getPriorityColor(task.priority))}>
+                    <Badge className={cn("text-[10px] transition-transform hover:scale-105", getPriorityColor(task.priority))}>
                       {task.priority}
                     </Badge>
                   </div>
@@ -177,13 +231,22 @@ export default function TasksPage() {
                     )}
                   </div>
                 </div>
-                <div className="text-right shrink-0">
+                <div className="flex items-center gap-2 shrink-0">
                   {task.due_date && (
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground opacity-70 group-hover:opacity-100 transition-opacity">
                       <Calendar className="h-3 w-3" />
                       {formatDate(task.due_date)}
                     </div>
                   )}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteTask(task.id);
+                    }}
+                    className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
                 </div>
               </div>
             </CardContent>
@@ -192,9 +255,9 @@ export default function TasksPage() {
       </div>
 
       {filteredTasks.length === 0 && (
-        <Card>
+        <Card className="animate-card-in">
           <CardContent className="p-12 text-center">
-            <CheckCircle2 className="h-8 w-8 mx-auto mb-3 text-muted-foreground opacity-40" />
+            <CheckCircle2 className="h-8 w-8 mx-auto mb-3 text-muted-foreground opacity-40 animate-bounce-subtle" />
             <p className="font-medium text-muted-foreground">No tasks found</p>
             <p className="text-sm text-muted-foreground mt-1">
               {filter === "all"
@@ -254,11 +317,7 @@ export default function TasksPage() {
             Cancel
           </Button>
           <Button
-            onClick={() => {
-              setCreateOpen(false);
-              setNewTitle("");
-              setNewDescription("");
-            }}
+            onClick={handleCreateTask}
             disabled={!newTitle.trim()}
           >
             Create Task
